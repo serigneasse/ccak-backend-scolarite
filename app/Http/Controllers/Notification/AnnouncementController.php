@@ -2,48 +2,45 @@
 
 namespace App\Http\Controllers\Notification;
 
-use App\Http\Controllers\Controller;
+use App\Models\Announcement;
+use App\Events\AnnouncementPublished;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
 
 class AnnouncementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Lister les annonces (NOT-012)
     public function index()
     {
-        //
+        return Announcement::with('creator')
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Créer une annonce (NOT-011)
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'priority' => 'in:low,medium,high',
+            'expires_at' => 'nullable|date',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $announcement = Announcement::create([
+            'id' => (string) Str::uuid(), // Utilisation de l'UUID
+            'creator_id' => Auth::id(),
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'priority' => $validated['priority'] ?? 'medium',
+            'expires_at' => $validated['expires_at'],
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        // Déclenche l'événement temps réel
+        event(new AnnouncementPublished($announcement));
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json($announcement, 201);
     }
 }

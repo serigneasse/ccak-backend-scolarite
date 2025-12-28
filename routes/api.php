@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserRoleController;
-
+use App\Http\Controllers\Notification\NotificationController;
+use App\Http\Controllers\Notification\AnnouncementController;
 Route::middleware('auth:api')->group(function () {
     Route::get('/user', function (Request $request) {
         return response()->json([
@@ -33,4 +34,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('roles', [RoleController::class, 'store']);
     Route::put('roles/{role}', [RoleController::class, 'update']);
     Route::put('users/{user}/roles', [UserRoleController::class, 'update']);
+   // Notifications
+    Route::get('notifications', [NotificationController::class, 'index']); // NOT-008
+    Route::post('notifications', [NotificationController::class, 'store']); // NOT-007
+    Route::put('notifications/{id}/read', [NotificationController::class, 'markAsRead']); // NOT-009
+    Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead']); // NOT-010
+    Route::get('announcements', [AnnouncementController::class, 'index']);
+    Route::post('announcements', [AnnouncementController::class, 'store']);
 });

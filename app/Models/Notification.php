@@ -15,11 +15,8 @@ class Notification extends Model
     protected $fillable = [
         'user_id',
         'type',
-        'channel',
         'title',
         'message',
-        'metadata',
-        'is_read',
         'read_at',
     ];
 

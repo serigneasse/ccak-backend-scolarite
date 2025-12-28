@@ -10,26 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('type'); // 'grade_published', 'enrollment_confirmed', 'document_ready', etc.
-            $table->string('channel')->default('in_app'); // 'in_app', 'email', 'sms'
-            $table->string('title');
-            $table->text('message');
-            $table->json('metadata')->nullable(); // Additional data (document_id, grade_id, etc.)
-            $table->boolean('is_read')->default(false);
-            $table->timestamp('read_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
-            // Indexes
-            $table->index(['user_id', 'is_read', 'created_at']);
-            $table->index(['user_id', 'type']);
-            $table->index('created_at');
-        });
-    }
+{
+    Schema::create('notifications', function (Blueprint $table) {
+        $table->uuid('id')->primary();
+        // On remplace foreignId par foreignUuid
+        $table->foreignUuid('user_id')->constrained()->onDelete('cascade'); 
+        $table->string('title');
+        $table->text('message');
+        $table->string('type'); 
+        $table->timestamp('read_at')->nullable();
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.
