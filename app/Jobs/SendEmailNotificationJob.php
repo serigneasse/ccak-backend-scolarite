@@ -20,18 +20,6 @@ class SendEmailNotificationJob implements ShouldQueue
 
     public function handle(EmailService $emailService): void
     {
-        $user = $this->notification->user;
-
-        if (!$user->email) {
-            return;
-        }
-
-        $emailService->send(
-            recipients: $user->email,
-            subject: $this->notification->title,
-            message: $this->notification->message,
-            template: 'notification',
-            templateData: $this->notification->metadata ?? []
-        );
+        $emailService->sendNotification($this->notification);
     }
 }

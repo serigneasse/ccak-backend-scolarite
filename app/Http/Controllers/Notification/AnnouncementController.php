@@ -19,11 +19,36 @@ class AnnouncementController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = Announcement::query()
-            ->with('creator:id,name,email')
-            ->active()
-            ->forUser($request->user())
-            ->notDismissedBy($request->user()->id)
-            ->orderBy('priority', 'desc')
+            ->with('creator:id,name,email');
+
+        // Only show active announcements for non-admin users
+        if (!$request->user()->hasRole('ADMIN')) {
+            $query->active()
+                ->forUser($request->user())
+                ->notDismissedBy($request->user()->id);
+        }
+
+        // Filter by priority
+        if ($request->has('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        // Filter by draft status
+        if ($request->has('is_draft')) {
+            $isPublished = filter_var($request->is_draft, FILTER_VALIDATE_BOOLEAN);
+            $query->where('is_draft', $isPublished);
+        }
+
+        // Search in title and content
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'ILIKE', "%{$search}%")
+                    ->orWhere('content', 'ILIKE', "%{$search}%");
+            });
+        }
+
+        $query->orderBy('priority', 'desc')
             ->orderBy('created_at', 'desc');
 
         $announcements = $query->paginate($request->get('per_page', 10));

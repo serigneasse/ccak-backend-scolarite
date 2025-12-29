@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'rabbitmq' => [
+        'email_api_url' => env('RABBITMQ_EMAIL_API_URL', 'https://api.ccak.edu.sn/api/notifications/rabbitmq/bulk-email'),
+        'sms_api_url' => env('RABBITMQ_SMS_API_URL', 'https://api.ccak.edu.sn/api/notifications/rabbitmq/bulk-sms'),
+        'api_token' => env('RABBITMQ_API_TOKEN'),
+    ],
+
 ];

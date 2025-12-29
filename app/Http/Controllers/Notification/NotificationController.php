@@ -37,6 +37,15 @@ class NotificationController extends Controller
             $query->where('is_read', $isRead);
         }
 
+        // Search in title and message
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'ILIKE', "%{$search}%")
+                    ->orWhere('message', 'ILIKE', "%{$search}%");
+            });
+        }
+
         $notifications = $query->paginate($request->get('per_page', 15));
 
         return NotificationResource::collection($notifications);

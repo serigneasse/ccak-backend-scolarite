@@ -10,14 +10,14 @@ class SendNotificationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->isAdmin();
+        return $this->user()->hasRole('ADMIN');
     }
 
     public function rules(): array
     {
         return [
             'recipient_ids' => ['required', 'array'],
-            'recipient_ids.*' => ['required', 'integer', 'exists:users,id'],
+            'recipient_ids.*' => ['required', 'string', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string'],
             'type' => ['required', 'string', Rule::in(Notification::getTypes())],

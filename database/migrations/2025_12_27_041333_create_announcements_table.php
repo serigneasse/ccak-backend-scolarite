@@ -33,8 +33,8 @@ return new class extends Migration
         // Pivot table for dismissed announcements
         Schema::create('announcement_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('announcement_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('announcement_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('dismissed_at');
             $table->timestamps();
 

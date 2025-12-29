@@ -31,6 +31,10 @@
             margin: 0;
             font-size: 24px;
         }
+        .header img {
+            max-width: 200px;
+            height: auto;
+        }
         .content {
             padding: 30px;
         }
@@ -55,7 +59,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>{{ config('app.name') }}</h1>
+            <img src="{{ url('logo.svg') }}" alt="{{ config('app.name') }}">
         </div>
         <div class="content">
             @yield('content')
